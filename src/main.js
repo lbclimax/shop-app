@@ -1,10 +1,13 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow ,ipcMain} = require('electron');
 const path = require('path');
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
   app.quit();
 }
+
+var Datastore = require('nedb');
+const productDb = new Datastore({ filename: 'product.db', autoload: true });
 
 const createWindow = () => {
   // Create the browser window.
@@ -24,13 +27,32 @@ const createWindow = () => {
   }
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+//mainWindow.webContents.openDevTools();
+
+ ipcMain.on('db:getProducts',(event)=>{
+  productDb.find({},function(err,docs){
+    console.log("docs loaded ",docs.length);
+    mainWindow.webContents.send('store:Products',docs)
+  })
+ })
+  
+
+  ipcMain.on('db:add-product',(event,product)=>{
+    productDb.insert(product,function(err,newDoc){
+      mainWindow.webContents.send('store:addProduct',newDoc)
+    })
+  })
+  
 };
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow);
+app.on('ready',()=>{
+  //ipcMain.handle('db:add-product',addProduct)
+  
+  createWindow();
+});
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits

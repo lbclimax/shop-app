@@ -1,7 +1,18 @@
 
 
 #panel{
-    width: 20%;
+    width: 200px;
     height: 100vh;
+    position: fixed;
     background-color: darkslategray;
+    top: 0;
+    left: 0;
+    color: white;
+   
+}
+#content{
+    position: relative;
+    left: 200px;
+    top: 0px;
+    
 }

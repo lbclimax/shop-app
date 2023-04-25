@@ -31,6 +31,11 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 
+import { OhVueIcon, addIcons } from "oh-vue-icons";
+import { FaFlag, RiHome6Line ,GiTakeMyMoney,SiBem,FaRing} from "oh-vue-icons/icons";
+
+addIcons(FaFlag, RiHome6Line,GiTakeMyMoney,SiBem,FaRing);
+
 import "bootstrap/dist/css/bootstrap.css"
 import "bootstrap/dist/js/bootstrap.bundle.js"
 import './index.css';
@@ -39,7 +44,7 @@ const app = createApp(App)
 
 app.use(createPinia())
 app.use(router)
-
+app.component("v-icon", OhVueIcon);
 app.mount('#app')
 
 

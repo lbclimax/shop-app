@@ -1,6 +1,6 @@
 {
-  "name": "my-new-app",
-  "productName": "my-new-app",
+  "name": "shop-app",
+  "productName": "shop-app",
   "version": "1.0.0",
   "description": "My Electron application description",
   "main": ".vite/build/main.js",
@@ -30,6 +30,8 @@
     "@vitejs/plugin-vue": "^4.1.0",
     "bootstrap": "^5.2.3",
     "electron-squirrel-startup": "^1.0.0",
+    "nedb": "^1.8.0",
+    "oh-vue-icons": "^1.0.0-rc3",
     "pinia": "^2.0.33",
     "vue": "^3.2.47",
     "vue-router": "^4.1.6"
