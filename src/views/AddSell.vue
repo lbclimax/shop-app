@@ -1,0 +1,167 @@
+<template>
+  <div>
+    <h2>{{ isMain ? "Add Sell" : "Add Item To Sell" }}</h2>
+    <div v-if="isMain">
+      <div class="position-relative w-100">
+        <span>Total Price : TSH {{ totalSell.toLocaleString() }}</span>
+        <button
+          class="position-absolute top-0 end-0 p-2 btn btn-primary rounded-pill"
+          @click="goItems"
+        >
+          Add Item
+        </button>
+      </div>
+      <div>Items</div>
+      <EasyDataTable :headers="sellItemsHeaders" :items="sellItems"> </EasyDataTable>
+    </div>
+    <div v-else>
+      <div class="position-relative w-100">
+        <form class="d-flex" role="search">
+          <input
+            class="form-control me-2"
+            type="search"
+            v-model="productSearch"
+            placeholder="Search"
+            aria-label="Search"
+            width="40%"
+          />
+        </form>
+        <button
+          class="position-absolute top-0 end-0 p-2 btn btn-danger rounded-pill"
+          @click="returnMain"
+        >
+          Cancel
+        </button>
+      </div>
+      <div>Items</div>
+      <EasyDataTable
+        :headers="productHeaders"
+        :items="store.products"
+        :searchValue="productSearch"
+        @click-row="clickRow"
+      >
+      </EasyDataTable>
+    </div>
+
+    <div
+      class="modal modal-dialog"
+      id="addQuantityModal"
+      tabindex="-1"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5">Input Quantity</h1>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="mb-3">
+                <label class="col-form-label">Quantity:</label>
+                <input type="number" v-model="sellItem.quantity" class="form-control" />
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+              Cancel
+            </button>
+            <button type="button" class="btn btn-primary" @click="addSellItem">
+              Add Item
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+import { Store } from "../stores/store";
+import { Modal } from "bootstrap/dist/js/bootstrap.esm";
+export default {
+  setup() {
+    const store = Store();
+    return { store };
+  },
+
+  data() {
+    return {
+      productHeaders: [
+        { text: "Name", value: "name" },
+        { text: "Selling Price", value: "sellingPrice" },
+        { text: "Stock", value: "remainedStock" },
+      ],
+
+      sellItemsHeaders: [
+        { text: "Name", value: "name" },
+        { text: "Price", value: "sellingPrice" },
+        { text: "Quantity", value: "quantity" },
+        { text: "Sub-Total", value: "subtotal" },
+      ],
+      sellItems: [],
+      productSearch: "",
+      isMain: true,
+      sellItem: {
+        name: "",
+        sellingPrice: 0,
+        buyingPrice: 0,
+        subtotal: 0,
+        quantity: 0,
+        productId: "",
+        stockBefore: "",
+      },
+      addQuantityModal: null,
+    };
+  },
+  mounted() {
+    this.addQuantityModal = new Modal("#addQuantityModal", {
+      backdrop: false,
+      keyboard: false,
+    });
+  },
+  computed: {
+    totalSell() {
+      let total = 0;
+      this.sellItems.forEach((item) => {
+        total += item.subtotal;
+      });
+      return total;
+    },
+  },
+  methods: {
+    returnMain() {
+      this.isMain = true;
+      this.productSearch = "";
+    },
+    goItems() {
+      this.isMain = false;
+      this.productSearch = "";
+    },
+    clickRow(item) {
+      console.log(item);
+      this.sellItem.name = item.name;
+      this.sellItem.buyingPrice = item.buyingPrice;
+      this.sellItem.sellingPrice = item.sellingPrice;
+      this.sellItem.productId = item._id;
+      this.sellItem.stockBefore = item.remainedStock;
+
+      this.addQuantityModal.toggle();
+    },
+    addSellItem() {
+      if (this.sellItem.stockBefore > this.sellItem.quantity) {
+        this.sellItem.subtotal = this.sellItem.quantity * this.sellItem.sellingPrice;
+        let addQuantityModal = new Modal("#addQuantityModal");
+        this.addQuantityModal.toggle();
+        this.sellItems.push(JSON.parse(JSON.stringify(this.sellItem)));
+        this.returnMain();
+      }
+    },
+  },
+};
+</script>

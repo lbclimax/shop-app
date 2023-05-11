@@ -108,7 +108,7 @@ export default {
     addProduct() {
       this.store.addProduct(JSON.stringify(this.product));
       const myModal = Modal.getInstance("#addProductDialog");
-      myModal.hide();
+      if (myModal) myModal.toggle();
       this.product = {
         name: "",
         buyingPrice: 0,

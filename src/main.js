@@ -25,7 +25,7 @@ const createWindow = () => {
   } else {
     mainWindow.loadFile(path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`));
   }
-
+  mainWindow.maximize();
   // Open the DevTools.
 //mainWindow.webContents.openDevTools();
 
