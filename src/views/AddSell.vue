@@ -65,6 +65,9 @@
               <div class="mb-3">
                 <label class="col-form-label">Quantity:</label>
                 <input type="number" v-model="sellItem.quantity" class="form-control" />
+                <div  class="invalid-feedback">
+                {{}}
+                 </div>
               </div>
             </form>
           </div>
@@ -117,6 +120,8 @@ export default {
         stockBefore: "",
       },
       addQuantityModal: null,
+      msgInvalid:"",
+      quantityOk:false
     };
   },
   mounted() {
@@ -160,6 +165,10 @@ export default {
         this.addQuantityModal.toggle();
         this.sellItems.push(JSON.parse(JSON.stringify(this.sellItem)));
         this.returnMain();
+      }
+      else if (this.sellItem.stockBefore < this.sellItem.quantity){
+         this.msgInvalid="Quantity is large than Stock";
+         this.quantityOk = false
       }
     },
   },
