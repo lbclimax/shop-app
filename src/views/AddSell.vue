@@ -4,6 +4,16 @@
     <div v-if="isMain">
       <div class="position-relative w-100">
         <span>Total Price : TSH {{ totalSell.toLocaleString() }}</span>
+        <div> <span> Discount </span>
+          <form class="d-flex" role="search">
+          <input
+            class="form-control me-2"
+            type="text"
+            v-model="discount_txt"
+            placeholder="discount"
+            width="30%"
+          />
+        </div>
         <button
           class="position-absolute top-0 end-0 p-2 btn btn-primary rounded-pill"
           @click="goItems"
@@ -65,8 +75,8 @@
               <div class="mb-3">
                 <label class="col-form-label">Quantity:</label>
                 <input type="number" v-model="sellItem.quantity" class="form-control" />
-                <div  class="invalid-feedback">
-                {{}}
+                <div v-if="!quantityOk" class="invalid-feedback">
+                {{msgInvalid}}
                  </div>
               </div>
             </form>
@@ -121,7 +131,8 @@ export default {
       },
       addQuantityModal: null,
       msgInvalid:"",
-      quantityOk:false
+      quantityOk:false,
+      discount:0
     };
   },
   mounted() {
@@ -138,6 +149,15 @@ export default {
       });
       return total;
     },
+    discount_txt:{
+      get() {
+        return this.discount.toLocaleString("en");
+      },
+      set(val) {
+        let num = val.replace(/,/g, "").replace(/[A-Za-z]+/g, "");
+        this.discount = parseInt(num);
+      },
+    }
   },
   methods: {
     returnMain() {
@@ -170,7 +190,18 @@ export default {
          this.msgInvalid="Quantity is large than Stock";
          this.quantityOk = false
       }
+      else if (this.sellItem.quantity==0){
+         this.msgInvalid="Please input quantity";
+         this.quantityOk = false
+      }
+      else if (this.sellItem.stockBefore==0){
+         this.msgInvalid="Item is out of stock";
+         this.quantityOk = false
+      }
     },
+    CompleteSell(){
+    let sell ={}
+    }
   },
 };
 </script>
