@@ -8,7 +8,7 @@ if (require('electron-squirrel-startup')) {
 
 var Datastore = require('nedb');
 const productDb = new Datastore({ filename: 'product.db', autoload: true });
-
+const sellsDb = new Datastore({ filename: 'sells.db', autoload: true });
 const createWindow = () => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
@@ -35,12 +35,42 @@ const createWindow = () => {
     mainWindow.webContents.send('store:Products',docs)
   })
  })
-  
 
+ ipcMain.on('db:getSells',(event)=>{
+  sellsDb.find({},function(err,docs){
+    console.log("sells loaded ",docs.length);
+    mainWindow.webContents.send('store:Sells',docs)
+  })
+ })
   ipcMain.on('db:add-product',(event,product)=>{
     productDb.insert(product,function(err,newDoc){
       mainWindow.webContents.send('store:addProduct',newDoc)
     })
+  })
+
+  ipcMain.on('db:add-sell',(event,sell)=>{
+    sellsDb.insert(sell,function(err,newDoc){
+      mainWindow.webContents.send('store:addSell',newDoc)
+    })
+    let itemUpdate=0;
+    sell.sellItems.forEach((value)=>{
+      productDb.update(
+        {_id:value.productId}, 
+        { $inc: {remainedStock: -1*value.quantity}},
+        {},
+        function(){
+          console.log('item updated',++itemUpdate,'of',sell.sellItems.length);
+          if(itemUpdate==sell.sellItems.length){
+            productDb.find({},function(err,docs){
+              console.log("products updated ",docs.length);
+              mainWindow.webContents.send('store:Products',docs)
+            })
+          }
+        }
+        
+        )
+    })
+
   })
   
 };

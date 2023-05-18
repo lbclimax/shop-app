@@ -1,6 +1,6 @@
 <template>
   <main>
-  <p>products 2 {{ store.products.length }}</p>
+  <p>products {{ store.products.length }} sells {{store.sells.length}}</p>
   </main>
 </template>
 <script>

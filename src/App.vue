@@ -10,10 +10,10 @@ const store = Store();
     <div id="panel">
       <ul class="nav nav-pills flex-column w-100">
         <li class="nav-item">
-          <RouterLink to="/" class="nav-link" activeClass="active"
-            ><v-icon name="ri-home-6-line" inverse="true" label="lukelo" />
-            Dashboard</RouterLink
-          >
+          <RouterLink to="/" class="nav-link" activeClass="active">
+            <v-icon name="ri-home-6-line" inverse="true" />
+            <span>Dashboard</span>
+          </RouterLink>
         </li>
         <li class="nav-item">
           <v-icon name="gi-take-my-money" inverse="true" label="lukelo" /> Sells
@@ -24,19 +24,17 @@ const store = Store();
           >
         </li>
         <li class="nav-item">
-          <RouterLink to="/products" class="nav-link" activeClass="active"
-            ><v-icon name="fa-ring" inverse="true" label="lukelo" /> Products</RouterLink
-          >
+          <RouterLink to="/products" class="nav-link" activeClass="active">
+            <v-icon name="fa-ring" inverse="true" label="lukelo" /><span>Products</span>
+          </RouterLink>
         </li>
 
         <hr />
-        <li class="nav-item">
-          <v-icon name="ri-home-6-line" inverse="true" label="lukelo" /> Add product
-        </li>
-        <li>
+
+        <li class="mx-2">
           <button
             type="button"
-            class="btn btn-primary w-100 mb-2"
+            class="btn btn-outline-info w-100 mb-2"
             data-bs-toggle="modal"
             data-bs-target="#addProductDialog"
           >
@@ -44,9 +42,9 @@ const store = Store();
           </button>
         </li>
 
-        <li>
+        <li class="mx-2">
           <RouterLink to="addSell" activeClass="succes"
-            ><button type="button" class="btn btn-primary mb-2 w-100">
+            ><button type="button" class="btn btn-outline-info mb-2 w-100">
               Add Sell
             </button></RouterLink
           >

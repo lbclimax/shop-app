@@ -19,6 +19,13 @@
     
 }
 
-.nav-link{
+#panel>ul>li>a>span{
     color: white;
+    padding-left: 15px;
 }
+
+
+.operation-wrapper .operation-icon {
+    width: 20px;
+    cursor: pointer;
+  }

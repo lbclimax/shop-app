@@ -3,7 +3,9 @@
     <h2>{{ isMain ? "Add Sell" : "Add Item To Sell" }}</h2>
     <div v-if="isMain">
       <div class="row g-2 me-2 mb-1 align-items-center">
-        <span class="col-3">Total Price : TSH {{ totalSell.toLocaleString() }}</span>
+        <span class="col-3"
+          >Total Price :<span class="fw-bold">TSH {{ totalSell.toLocaleString() }}</span>
+        </span>
         <form class="col-3">
           <div class="input-group">
             <div class="input-group-text">Discount : TSH</div>
@@ -15,14 +17,24 @@
             />
           </div>
         </form>
-        <span class="col-3">Total Cost : TSH {{ totalCost.toLocaleString() }}</span>
+        <span class="col-3"
+          >Total Cost :<span class="fw-bold">TSH {{ totalCost.toLocaleString() }}</span>
+        </span>
         <div class="col-3 d-flex justify-content-between">
-          <button class="btn btn-primary rounded-pill" @click="goItems">Add Item</button>
-          <button class="btn btn-danger rounded-pill" @click="returnMain">Cancel</button>
+          <button
+            class="btn btn-success rounded-pill"
+            @click="CompleteSell"
+            :disabled="sellItems.length == 0"
+          >
+            Complete Sell
+          </button>
+          <button class="btn btn-danger rounded-pill" @click="returnMain">
+            Cancel Sell
+          </button>
         </div>
       </div>
       <div class="row me-2">
-        <span class="col-11">Items </span>
+        <span class="col-3">Items </span>
         <button class="col-1 btn btn-primary rounded-pill" @click="goItems">
           Add Item
         </button>
@@ -33,6 +45,15 @@
         </template>
         <template #item-subtotal="item">
           {{ item.subtotal.toLocaleString() }}
+        </template>
+        <template #item-productId="item">
+          <div class="operation-wrapper">
+            <img
+              src="../assets/delete.png"
+              class="operation-icon"
+              @click="deleteItem(item)"
+            />
+          </div>
         </template>
       </EasyDataTable>
     </div>
@@ -137,6 +158,7 @@ export default {
         { text: "Price", value: "sellingPrice" },
         { text: "Quantity", value: "quantity" },
         { text: "Sub-Total", value: "subtotal" },
+        { text: "Action", value: "productId" },
       ],
       sellItems: [],
       productSearch: "",
@@ -192,6 +214,7 @@ export default {
         let num = val.replace(/,/g, "").replace(/[A-Za-z]+/g, "");
         this.discount = num ? parseInt(num) : 0;
       },
+      itemsToAdd() {},
     },
     totalCost() {
       return this.totalSell - this.discount;
@@ -225,7 +248,26 @@ export default {
       }
     },
     CompleteSell() {
-      let sell = {};
+      let time = Date.now();
+      let sell = {
+        time,
+        sellItems: this.sellItems,
+        totalCost: this.totalCost,
+        totalSell: this.totalSell,
+      };
+      this.store.addSell(JSON.parse(JSON.stringify(sell)));
+      this.$router.push("/");
+    },
+    deleteItem(item) {
+      this.sellItems.filter((value, index, arr) => {
+        if (value.productId == item.productId && item.quantity == value.quantity) {
+          console.log(value, index, item);
+          arr.splice(index, 1);
+          return true;
+        }
+        return false;
+        l;
+      });
     },
   },
 };
