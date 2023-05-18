@@ -2,27 +2,39 @@
   <div>
     <h2>{{ isMain ? "Add Sell" : "Add Item To Sell" }}</h2>
     <div v-if="isMain">
-      <div class="position-relative w-100">
-        <span>Total Price : TSH {{ totalSell.toLocaleString() }}</span>
-        <div> <span> Discount </span>
-          <form class="d-flex" role="search">
-          <input
-            class="form-control me-2"
-            type="text"
-            v-model="discount_txt"
-            placeholder="discount"
-            width="30%"
-          />
+      <div class="row g-2 me-2 mb-1 align-items-center">
+        <span class="col-3">Total Price : TSH {{ totalSell.toLocaleString() }}</span>
+        <form class="col-3">
+          <div class="input-group">
+            <div class="input-group-text">Discount : TSH</div>
+            <input
+              class="form-control"
+              type="text"
+              v-model="discount_txt"
+              placeholder="discount"
+            />
+          </div>
+        </form>
+        <span class="col-3">Total Cost : TSH {{ totalCost.toLocaleString() }}</span>
+        <div class="col-3 d-flex justify-content-between">
+          <button class="btn btn-primary rounded-pill" @click="goItems">Add Item</button>
+          <button class="btn btn-danger rounded-pill" @click="returnMain">Cancel</button>
         </div>
-        <button
-          class="position-absolute top-0 end-0 p-2 btn btn-primary rounded-pill"
-          @click="goItems"
-        >
+      </div>
+      <div class="row me-2">
+        <span class="col-11">Items </span>
+        <button class="col-1 btn btn-primary rounded-pill" @click="goItems">
           Add Item
         </button>
       </div>
-      <div>Items</div>
-      <EasyDataTable :headers="sellItemsHeaders" :items="sellItems"> </EasyDataTable>
+      <EasyDataTable :headers="sellItemsHeaders" :items="sellItems">
+        <template #item-sellingPrice="item">
+          {{ item.sellingPrice.toLocaleString() }}
+        </template>
+        <template #item-subtotal="item">
+          {{ item.subtotal.toLocaleString() }}
+        </template>
+      </EasyDataTable>
     </div>
     <div v-else>
       <div class="position-relative w-100">
@@ -50,6 +62,9 @@
         :searchValue="productSearch"
         @click-row="clickRow"
       >
+        <template #item-sellingPrice="item">
+          {{ item.sellingPrice.toLocaleString() }}
+        </template>
       </EasyDataTable>
     </div>
 
@@ -74,10 +89,16 @@
             <form>
               <div class="mb-3">
                 <label class="col-form-label">Quantity:</label>
-                <input type="number" v-model="sellItem.quantity" class="form-control" />
-                <div v-if="!quantityOk" class="invalid-feedback">
-                {{msgInvalid}}
-                 </div>
+                <input
+                  type="number"
+                  v-model="sellItem.quantity"
+                  aria-describedby="invalidQuantityfeedback"
+                  class="form-control"
+                  :class="quantityOk ? 'is-valid' : 'is-invalid'"
+                />
+                <div id="invalidQuantityfeedback" class="invalid-feedback">
+                  {{ msgInvalid }}
+                </div>
               </div>
             </form>
           </div>
@@ -130,10 +151,24 @@ export default {
         stockBefore: "",
       },
       addQuantityModal: null,
-      msgInvalid:"",
-      quantityOk:false,
-      discount:0
+      msgInvalid: "",
+      quantityOk: false,
+      discount: 0,
     };
+  },
+  watch: {
+    "sellItem.quantity"(value) {
+      if (value == 0) {
+        this.msgInvalid = "Please input quantity";
+        this.quantityOk = false;
+      } else if (this.sellItem.stockBefore == 0) {
+        this.msgInvalid = "Item is out of stock";
+        this.quantityOk = false;
+      } else if (value > this.sellItem.stockBefore) {
+        this.msgInvalid = "Quantity is large than Stock";
+        this.quantityOk = false;
+      } else this.quantityOk = true;
+    },
   },
   mounted() {
     this.addQuantityModal = new Modal("#addQuantityModal", {
@@ -149,15 +184,18 @@ export default {
       });
       return total;
     },
-    discount_txt:{
+    discount_txt: {
       get() {
         return this.discount.toLocaleString("en");
       },
       set(val) {
         let num = val.replace(/,/g, "").replace(/[A-Za-z]+/g, "");
-        this.discount = parseInt(num);
+        this.discount = num ? parseInt(num) : 0;
       },
-    }
+    },
+    totalCost() {
+      return this.totalSell - this.discount;
+    },
   },
   methods: {
     returnMain() {
@@ -175,33 +213,20 @@ export default {
       this.sellItem.sellingPrice = item.sellingPrice;
       this.sellItem.productId = item._id;
       this.sellItem.stockBefore = item.remainedStock;
-
+      this.sellItem.quantity = 0;
       this.addQuantityModal.toggle();
     },
     addSellItem() {
-      if (this.sellItem.stockBefore > this.sellItem.quantity) {
+      if (this.quantityOk) {
         this.sellItem.subtotal = this.sellItem.quantity * this.sellItem.sellingPrice;
-        let addQuantityModal = new Modal("#addQuantityModal");
         this.addQuantityModal.toggle();
         this.sellItems.push(JSON.parse(JSON.stringify(this.sellItem)));
         this.returnMain();
       }
-      else if (this.sellItem.stockBefore < this.sellItem.quantity){
-         this.msgInvalid="Quantity is large than Stock";
-         this.quantityOk = false
-      }
-      else if (this.sellItem.quantity==0){
-         this.msgInvalid="Please input quantity";
-         this.quantityOk = false
-      }
-      else if (this.sellItem.stockBefore==0){
-         this.msgInvalid="Item is out of stock";
-         this.quantityOk = false
-      }
     },
-    CompleteSell(){
-    let sell ={}
-    }
+    CompleteSell() {
+      let sell = {};
+    },
   },
 };
 </script>
