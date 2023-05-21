@@ -17,9 +17,14 @@
             />
           </div>
         </form>
-        <span class="col-3"
-          >Total Cost :<span class="fw-bold">TSH {{ totalCost.toLocaleString() }}</span>
-        </span>
+        <div class="col-3">
+          <span> Total Cost :</span>
+          <span class="fw-bold">TSH {{ totalCost.toLocaleString() }}</span>
+          <br />
+          <span> Total Profit :</span>
+          <span class="fw-bold">TSH {{ totalProfit.toLocaleString() }}</span>
+        </div>
+
         <div class="col-3 d-flex justify-content-between">
           <button
             class="btn btn-success rounded-pill"
@@ -171,6 +176,8 @@ export default {
         quantity: 0,
         productId: "",
         stockBefore: "",
+        profit: 0,
+        profitPerItem: 0,
       },
       addQuantityModal: null,
       msgInvalid: "",
@@ -206,6 +213,14 @@ export default {
       });
       return total;
     },
+    totalProfit() {
+      let total = 0;
+      this.sellItems.forEach((item) => {
+        total += item.profit;
+      });
+      return total - this.discount;
+    },
+
     discount_txt: {
       get() {
         return this.discount.toLocaleString("en");
@@ -232,6 +247,7 @@ export default {
     clickRow(item) {
       console.log(item);
       this.sellItem.name = item.name;
+      this.sellItem.profitPerItem = item.profit | (item.sellingPrice - item.buyingPrice);
       this.sellItem.buyingPrice = item.buyingPrice;
       this.sellItem.sellingPrice = item.sellingPrice;
       this.sellItem.productId = item._id;
@@ -242,6 +258,7 @@ export default {
     addSellItem() {
       if (this.quantityOk) {
         this.sellItem.subtotal = this.sellItem.quantity * this.sellItem.sellingPrice;
+        this.sellItem.profit = this.sellItem.profitPerItem * this.sellItem.quantity;
         this.addQuantityModal.toggle();
         this.sellItems.push(JSON.parse(JSON.stringify(this.sellItem)));
         this.returnMain();
@@ -254,6 +271,8 @@ export default {
         sellItems: this.sellItems,
         totalCost: this.totalCost,
         totalSell: this.totalSell,
+        totalProfit: this.totalProfit,
+        discount: this.discount,
       };
       this.store.addSell(JSON.parse(JSON.stringify(sell)));
       this.$router.push("/");

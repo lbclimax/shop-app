@@ -16,12 +16,16 @@ const store = Store();
           </RouterLink>
         </li>
         <li class="nav-item">
-          <v-icon name="gi-take-my-money" inverse="true" label="lukelo" /> Sells
+          <RouterLink to="/sells" class="nav-link" activeClass="active">
+            <v-icon name="gi-take-my-money" inverse="true" label="lukelo" /><span
+              >Sells</span
+            >
+          </RouterLink>
         </li>
         <li class="nav-item">
-          <RouterLink to="/"
-            ><v-icon name="si-bem" inverse="true" label="lukelo" /> Stocks</RouterLink
-          >
+          <RouterLink to="/stocks" class="nav-link" activeClass="active">
+            <v-icon name="si-bem" inverse="true" label="lukelo" /><span>Stocks</span>
+          </RouterLink>
         </li>
         <li class="nav-item">
           <RouterLink to="/products" class="nav-link" activeClass="active">

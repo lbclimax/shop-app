@@ -7,13 +7,15 @@ if (require('electron-squirrel-startup')) {
 }
 
 var Datastore = require('nedb');
-const productDb = new Datastore({ filename: 'product.db', autoload: true });
-const sellsDb = new Datastore({ filename: 'sells.db', autoload: true });
+let userData= app.getPath("userData")
+const productDb = new Datastore({ filename: path.join(userData,"product.db"), autoload: true });
+const sellsDb = new Datastore({ filename: path.join(userData,'sells.db'), autoload: true });
 const createWindow = () => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    icon:'/icons/icon.ico',
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
     },

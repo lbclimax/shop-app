@@ -106,6 +106,7 @@ export default {
   },
   methods: {
     addProduct() {
+      this.product.profit=this.product.sellingPrice-this.product.buyingPrice;
       this.store.addProduct(JSON.stringify(this.product));
       const myModal = Modal.getInstance("#addProductDialog");
       if (myModal) myModal.toggle();
@@ -135,7 +136,7 @@ export default {
         let num = val.replace(/,/g, "").replace(/[A-Za-z]+/g, "");
         this.product.sellingPrice = parseInt(num);
       },
-    },
+    }
   },
 };
 </script>
