@@ -1,3 +1,4 @@
+const path = require('path');
 module.exports = {
   packagerConfig: {},
   rebuildConfig: {},
@@ -8,8 +9,10 @@ module.exports = {
     {
       name: '@electron-forge/maker-squirrel',
       config: {
-        iconUrl:''
-        setupIcon:'/icons/icon.ico'
+        setupIcon: path.join(__dirname, 'icons','icon.ico'),
+        iconUrl:  'https://raw.githubusercontent.com/lbclimax/shop-app/master/icons/icon.ico',
+        skipUpdateIcon: true,
+
       },
     },
     {
@@ -53,6 +56,6 @@ module.exports = {
     },
   ],
   packagerConfig: {
-    icon: 'icons/icon' 
+    icon:path.join(__dirname, 'icons','icon')
   }
 };

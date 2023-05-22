@@ -15,10 +15,11 @@ const createWindow = () => {
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
-    icon:'/icons/icon.ico',
+    icon:path.join(__dirname, '../../icons/icon.ico'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
     },
+    show:false
   });
 
   // and load the index.html of the app.
@@ -28,6 +29,7 @@ const createWindow = () => {
     mainWindow.loadFile(path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`));
   }
   mainWindow.maximize();
+  mainWindow.show();
   // Open the DevTools.
 //mainWindow.webContents.openDevTools();
 
